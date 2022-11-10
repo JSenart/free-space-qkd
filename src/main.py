@@ -1,18 +1,23 @@
 #!/usr/bin/python
 import argparse
 from random import randint
+from typing import List, Tuple
 
-from models import QuantumAgent
+from sympy import pprint
 
+# from src.models import QuantumAgent
+from src.models.databeam import DataStream, Beam
+
+from sympy.physics.optics.gaussopt import BeamParameter
+
+from src.optical_setup import alice_optical_path, bob_optical_path
+from src.models.quantumagent import QuantumAgent
 
 SEPARATOR = "############################"
 
 
-def generate_random_bits(N):
-    aux = list()
-    for _ in range(N):
-        aux.append(randint(0, 1))
-    return aux
+def generate_random_bits(N: int) -> List[bool]:
+    return [bool(randint(0, 1)) for _ in range(N)]
 
 
 def user_feedback(
@@ -22,7 +27,7 @@ def user_feedback(
     alice_key,
     bob_key,
     eve: QuantumAgent = None,
-    ):
+):
     if verbose:
         print(f"Alice generates {N} random basis.")
         input()
@@ -77,25 +82,25 @@ def QKD(N, verbose=False, eve_present=False):
     alice.generate_basis(N)
     alice.generate_data(N)
     sent_qubits = alice.send()
-    
+
     eve = None
     if eve_present:
         eve = QuantumAgent("Eve")
         eve.generate_basis(N)
         eve.receive(data=sent_qubits)
         sent_qubits = eve.send()
-    
+
     bob = QuantumAgent("Bob")
     bob.generate_basis(N)
     bob.receive(data=sent_qubits)
-    
+
     alice_key = list()
     bob_key = list()
     for i in range(N):
         if alice.basis[i] == bob.basis[i]:
             alice_key.append(alice.data[i])
             bob_key.append(bob.data[i])
-    
+
     user_feedback(
         verbose=verbose,
         alice=alice,
@@ -106,6 +111,56 @@ def QKD(N, verbose=False, eve_present=False):
     )
 
     return alice_key == bob_key
+
+
+def issue_key(key: List[bool]) -> Tuple[DataStream, List[bool]]:
+    base = generate_random_bits(len(key))
+    return (
+        DataStream(
+            data=[
+                generate_beam(bit=key[i], base=base[i])
+                for i in range(len(key))
+            ]
+        ),
+        base,
+    )
+
+def generate_beam(base: bool, bit: bool) -> Beam:
+    beam = Beam(parameter=BeamParameter(830e-9, 0, 1e-3))
+    bit, base = int(bit), int(base)
+    beam.polarization = alice_optical_path(bit=bit, base=base) * beam.polarization
+    return beam
+
+def receive_beam(beam: Beam) -> Tuple[bool, bool]:
+    beams = bob_optical_path(beam)
+    detector = beams.index(max(beams, key=lambda b: b.polarization[0]))
+    base = detector >= 2
+    bit = bool(detector % 2)
+    return base, bit
+
+
+def receive_key(stream: DataStream):
+    return list(
+        map(
+            list,
+            zip(*[
+                receive_beam(beam) for beam in data_stream.data
+                ]
+            )
+        )
+    )
+
+
+N = 30  # Length of key
+key = generate_random_bits(N)
+data_stream, base = issue_key(key)
+received_beams = [bob_optical_path(beam) for beam in data_stream.data]
+
+detectors = [
+    beams.index(max(beams, key=lambda b: b.polarization[0])) for beams in received_beams
+]
+received_base = [int(format(detector, "#04b")[-2]) for detector in detectors]
+received_key = [int(format(detector, "#04b")[-1]) for detector in detectors]
 
 
 if __name__ == "__main__":
