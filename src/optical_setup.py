@@ -6,7 +6,7 @@ from sympy.core.numbers import (I, pi)
 from sympy.physics.optics.polarization import (mueller_matrix,
     linear_polarizer, half_wave_retarder, quarter_wave_retarder, phase_retarder)
 
-from models.databeam import Beam
+from src.models.databeam import Beam
 
 # def eom_transfer_matrix():
 #     return FlatRefraction(n_eom, n_air) * \

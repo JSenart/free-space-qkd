@@ -5,12 +5,13 @@ from typing import List, Tuple
 
 from sympy import pprint
 
-from models import QuantumAgent
-from models.databeam import DataStream, Beam
+# from src.models import QuantumAgent
+from src.models.databeam import DataStream, Beam
 
 from sympy.physics.optics.gaussopt import BeamParameter
 
-from optical_setup import alice_optical_path, bob_optical_path
+from src.optical_setup import alice_optical_path, bob_optical_path
+from src.models.quantumagent import QuantumAgent
 
 SEPARATOR = "############################"
 
@@ -162,45 +163,45 @@ received_base = [int(format(detector, "#04b")[-2]) for detector in detectors]
 received_key = [int(format(detector, "#04b")[-1]) for detector in detectors]
 
 
-# if __name__ == "__main__":
-# parser = argparse.ArgumentParser(description="BB84 QKD demonstration with Python.")
-# req_named = parser.add_argument_group("Required arguments")
-# opt_named = parser.add_argument_group("Optional arguments")
-# req_named.add_argument("-q", "--qubits", required=True, help="Number of Qubits.")
-# opt_named.add_argument(
-#     "-i", "--iterate", required=False, help="Number of iterations."
-# )
-# opt_named.add_argument(
-#     "-e",
-#     "--eve",
-#     action="store_true",
-#     default=False,
-#     required=False,
-#     help="Is EVE present?",
-# )
-# opt_named.add_argument(
-#     "-v",
-#     "--verbose",
-#     action="store_true",
-#     default=False,
-#     required=False,
-#     help="Verbose logs.",
-# )
-# args = parser.parse_args()
-# assert int(args.qubits)
-# ret = list()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="BB84 QKD demonstration with Python.")
+    req_named = parser.add_argument_group("Required arguments")
+    opt_named = parser.add_argument_group("Optional arguments")
+    req_named.add_argument("-q", "--qubits", required=True, help="Number of Qubits.")
+    opt_named.add_argument(
+        "-i", "--iterate", required=False, help="Number of iterations."
+    )
+    opt_named.add_argument(
+        "-e",
+        "--eve",
+        action="store_true",
+        default=False,
+        required=False,
+        help="Is EVE present?",
+    )
+    opt_named.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        default=False,
+        required=False,
+        help="Verbose logs.",
+    )
+    args = parser.parse_args()
+    assert int(args.qubits)
+    ret = list()
 
-# N = 1
-# if args.iterate:
-#     assert int(args.iterate)
-#     N = int(args.iterate)
+    N = 1
+    if args.iterate:
+        assert int(args.iterate)
+        N = int(args.iterate)
 
-# for i in range(N):
-#     print(f"############# {i} #############")
-#     ret.append(QKD(int(args.qubits), verbose=args.verbose, eve_present=args.eve))
-#     print(SEPARATOR)
-# print(SEPARATOR)
-# t = f"{float(ret.count(True)) * 100.0 / float(N):.2f}"
-# u = f"{float(ret.count(False)) * 100.0 / float(N):.2f}"
-# print(f"True: {ret.count(True)} <{t}%>")
-# print(f"False: {ret.count(False)} <{u}%>")
+    for i in range(N):
+        print(f"############# {i} #############")
+        ret.append(QKD(int(args.qubits), verbose=args.verbose, eve_present=args.eve))
+        print(SEPARATOR)
+    print(SEPARATOR)
+    t = f"{float(ret.count(True)) * 100.0 / float(N):.2f}"
+    u = f"{float(ret.count(False)) * 100.0 / float(N):.2f}"
+    print(f"True: {ret.count(True)} <{t}%>")
+    print(f"False: {ret.count(False)} <{u}%>")

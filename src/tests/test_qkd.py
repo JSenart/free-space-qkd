@@ -1,17 +1,10 @@
-from sympy import Matrix
 from sympy.physics.optics.polarization import stokes_vector
 from sympy.core.numbers import (I, pi)
 
 from sympy.physics.optics.gaussopt import BeamParameter
-from free-space-qkd.models.databeam import Beam
+from src.models.databeam import Beam
 
-
-from optical_setup import pbs_mueller_matrix
-
-from sympy.physics.optics.polarization import (mueller_matrix,
-    linear_polarizer, half_wave_retarder, quarter_wave_retarder, phase_retarder)
-
-from qkd import generate_beam, receive_beam
+from src.main import generate_beam, receive_beam
 
 no_beam = stokes_vector(0, 0, 0, 0)
 vertical_polarization = stokes_vector(psi = pi/2, chi=0, p=1)

@@ -1,6 +1,8 @@
 from random import randint
 
-from models.qubit import QuBit
+from src.models.qubit import QuBit
+
+# from qubit import QuBit
 
 
 class QuantumAgent:

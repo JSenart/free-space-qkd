@@ -2,10 +2,9 @@ from sympy import Matrix
 from sympy.physics.optics.polarization import stokes_vector
 from sympy.core.numbers import (I, pi)
 
-from optical_setup import pbs_mueller_matrix
+from src.optical_setup import pbs_mueller_matrix
 
-from sympy.physics.optics.polarization import (mueller_matrix,
-    linear_polarizer, half_wave_retarder, quarter_wave_retarder, phase_retarder)
+from sympy.physics.optics.polarization import (mueller_matrix, quarter_wave_retarder)
 
 no_beam = stokes_vector(0, 0, 0, 0)
 horizontal_polarization = stokes_vector(psi = 0, chi=0, p=1)
