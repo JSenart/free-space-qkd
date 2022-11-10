@@ -1,6 +1,8 @@
 from random import randint
 
-from models.qubit import QuBit
+from src.models.qubit import QuBit
+
+# from qubit import QuBit
 
 
 class QuantumAgent:
@@ -21,19 +23,13 @@ class QuantumAgent:
         """
         assert len(self.data) == len(self.basis), "Basis and data must be the same length!"
         qubits = list()
-        for i in range(len(self.data)):
-            if not self.basis[i]:
+        for base, bit in zip(self.basis, self.data):
+            if not base:
                 # Computational base
-                if not self.data[i]:
-                    qubits.append(QuBit(0))
-                else:
-                    qubits.append(QuBit(1))
+                qubits.append(QuBit(bit))
             else:
                 # Hadamard base
-                if not self.data[i]:
-                    aux = QuBit(0)
-                else:
-                    aux = QuBit(1)
+                aux = QuBit(bit)
                 aux.hadamard()
                 qubits.append(aux)
         self.last_sent = qubits
